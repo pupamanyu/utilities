@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TeradataDBObjectSet xmlns="http://schemas.teradata.com/dbobject" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" xsi:schemaLocation="http://schemas.teradata.com/dbobject http://schemas.teradata.com/dbobject/DBObject.xsd"><Table afterJournal="No" baseClass="Table" beforeJournal="No" checkSumLevel="Default" dbName="YourDB" fallback="false" kind="Multiset" map="TD_MAP1" map_kind="contiguous" mergeBlockRatio="Default" name="orders" objId="0:3650" objVer="4" systemVersioned="false">
+<ColumnList><Column name="o_orderkey" nullable="true" order="1"><DataType><Integer/></DataType></Column>
+<Column format="yyyy-mm-dd" name="o_date" nullable="true" order="2"><DataType><Date/></DataType></Column>
+<Column name="o_status" nullable="true" order="3"><DataType><Char casespecific="true" charset="LATIN" length="1" uppercase="false" varying="false"/></DataType></Column>
+<Column name="o_custkey" nullable="true" order="4"><DataType><Integer/></DataType></Column>
+<Column name="o_totalprice" nullable="true" order="5"><DataType><Decimal precision="13" scale="2"/></DataType></Column>
+<Column name="o_orderpriority" nullable="true" order="6">
+  <DataType>
+    <Char casespecific="true" charset="LATIN" length="21" uppercase="false" varying="false"/>
+  </DataType>
+</Column>
+<Column name="o_clerk" nullable="true" order="7">
+  <DataType>
+    <Char casespecific="true" charset="LATIN" length="16" uppercase="false" varying="false"/>
+  </DataType>
+</Column>
+<Column name="o_shippriority" nullable="true" order="8"><DataType><Integer/></DataType></Column>
+<Column name="o_comment" nullable="true" order="9"><DataType><Char casespecific="true" charset="LATIN" length="79" uppercase="false" varying="true"/></DataType></Column></ColumnList>
+<Indexes><PrimaryIndex unique="true"><ColumnList><Column name="o_orderkey" order="1"/></ColumnList></PrimaryIndex></Indexes>
+<SQLText><![CDATA[CREATE MULTISET TABLE YourDB.orders ,NO FALLBACK ,
+     NO BEFORE JOURNAL,
+     NO AFTER JOURNAL,
+     CHECKSUM = DEFAULT,
+     DEFAULT MERGEBLOCKRATIO,
+     MAP = TD_MAP1
+     (
+      o_orderkey INTEGER,
+      o_date DATE FORMAT 'yyyy-mm-dd',
+      o_status CHAR(1) CHARACTER SET LATIN CASESPECIFIC,
+      o_custkey INTEGER,
+      o_totalprice DECIMAL(13,2),
+      o_orderpriority CHAR(21) CHARACTER SET LATIN CASESPECIFIC,
+      o_clerk CHAR(16) CHARACTER SET LATIN CASESPECIFIC,
+      o_shippriority INTEGER,
+      o_comment VARCHAR(79) CHARACTER SET LATIN CASESPECIFIC)
+UNIQUE PRIMARY INDEX ( o_orderkey )]]></SQLText></Table>
+<Environment><Server dbRelease="16.10" dbVersion="16.10" hostName="localhost"/><User userId="00000704" userName="User"/><Session charset="UTF8" dateTime="2017-03-24T16:19:32"/></Environment>
+</TeradataDBObjectSet>
