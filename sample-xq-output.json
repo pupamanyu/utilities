@@ -1,0 +1,115 @@
+[
+    {
+      "DatabaseName": "YourDB"
+    },
+    {
+      "TableName": "orders"
+    },
+    {
+      "Fields": [
+        {
+          "@name": "o_orderkey",
+          "@nullable": "true",
+          "@order": "1",
+          "DataType": {
+            "Integer": null
+          }
+        },
+        {
+          "@format": "yyyy-mm-dd",
+          "@name": "o_date",
+          "@nullable": "true",
+          "@order": "2",
+          "DataType": {
+            "Date": null
+          }
+        },
+        {
+          "@name": "o_status",
+          "@nullable": "true",
+          "@order": "3",
+          "DataType": {
+            "Char": {
+              "@casespecific": "true",
+              "@charset": "LATIN",
+              "@length": "1",
+              "@uppercase": "false",
+              "@varying": "false"
+            }
+          }
+        },
+        {
+          "@name": "o_custkey",
+          "@nullable": "true",
+          "@order": "4",
+          "DataType": {
+            "Integer": null
+          }
+        },
+        {
+          "@name": "o_totalprice",
+          "@nullable": "true",
+          "@order": "5",
+          "DataType": {
+            "Decimal": {
+              "@precision": "13",
+              "@scale": "2"
+            }
+          }
+        },
+        {
+          "@name": "o_orderpriority",
+          "@nullable": "true",
+          "@order": "6",
+          "DataType": {
+            "Char": {
+              "@casespecific": "true",
+              "@charset": "LATIN",
+              "@length": "21",
+              "@uppercase": "false",
+              "@varying": "false"
+            }
+          }
+        },
+        {
+          "@name": "o_clerk",
+          "@nullable": "true",
+          "@order": "7",
+          "DataType": {
+            "Char": {
+              "@casespecific": "true",
+              "@charset": "LATIN",
+              "@length": "16",
+              "@uppercase": "false",
+              "@varying": "false"
+            }
+          }
+        },
+        {
+          "@name": "o_shippriority",
+          "@nullable": "true",
+          "@order": "8",
+          "DataType": {
+            "Integer": null
+          }
+        },
+        {
+          "@name": "o_comment",
+          "@nullable": "true",
+          "@order": "9",
+          "DataType": {
+            "Char": {
+              "@casespecific": "true",
+              "@charset": "LATIN",
+              "@length": "79",
+              "@uppercase": "false",
+              "@varying": "true"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "DDL": "CREATE MULTISET TABLE YourDB.orders ,NO FALLBACK ,\n     NO BEFORE JOURNAL,\n     NO AFTER JOURNAL,\n     CHECKSUM = DEFAULT,\n     DEFAULT MERGEBLOCKRATIO,\n     MAP = TD_MAP1\n     (\n      o_orderkey INTEGER,\n      o_date DATE FORMAT 'yyyy-mm-dd',\n      o_status CHAR(1) CHARACTER SET LATIN CASESPECIFIC,\n      o_custkey INTEGER,\n      o_totalprice DECIMAL(13,2),\n      o_orderpriority CHAR(21) CHARACTER SET LATIN CASESPECIFIC,\n      o_clerk CHAR(16) CHARACTER SET LATIN CASESPECIFIC,\n      o_shippriority INTEGER,\n      o_comment VARCHAR(79) CHARACTER SET LATIN CASESPECIFIC)\nUNIQUE PRIMARY INDEX ( o_orderkey )"
+    }
+  ]
