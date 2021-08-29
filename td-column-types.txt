@@ -1,3 +1,5 @@
+# Reference: https://docs.teradata.com/r/rgAb27O_xRmMVc_aQq2VGw/8xxKzn8yCHAAAbFZU1W5xw
+
 A1 ARRAY 
 AN MULTI-DIMENSIONAL ARRAY
 AT TIME 
