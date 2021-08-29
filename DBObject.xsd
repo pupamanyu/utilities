@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.teradata.com/dbobject" targetNamespace="http://schemas.teradata.com/dbobject" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <xs:attributeGroup name="ColumnAttributeGroup">
+    <xs:annotation>
+      <xs:documentation> Defines attributes Format and Title. </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="format" type="xs:string" />
+    <xs:attribute name="title" type="xs:string" />
+  </xs:attributeGroup>
+  <xs:element name="Compress">
+    <xs:annotation>
+      <xs:documentation> Defines the list of values to be compressed for multivalue
+        compression and the names of UDFs used to compress or decompress column values
+        for algorithmic compression. </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="CompressValue">
+          <xs:complexType>
+            <xs:attribute name="value" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="compressNull" type="xs:boolean" />
+      <xs:attribute name="compressUDFName" type="xs:string" />
+      <xs:attribute name="decompressUDFName" type="xs:string" />
+      <xs:attribute name="noCompress" type="xs:boolean" />
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Identity">
+    <xs:annotation>
+      <xs:documentation> Defines the parameters for an identity column. The
+        parameters include identity column value generation (system always/by default), value start
+        with, value increment by, minimum value, maximum value, and system-generated value recycle or not.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="valueGeneration" use="required">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="SystemAlways" />
+            <xs:enumeration value="ByDefault" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="cycle" type="xs:boolean" />
+      <xs:attribute name="startValue" type="xs:string" />
+      <xs:attribute name="increment" type="xs:string" />
+      <xs:attribute name="minValue" type="xs:string" />
+      <xs:attribute name="maxValue" type="xs:string" />
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="ValidTimeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Current" />
+      <xs:enumeration value="Sequenced" />
+      <xs:enumeration value="NonSequenced" />
+      <xs:enumeration value="WithoutOverlaps" />
+      <xs:enumeration value="PeriodRI" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="TransactionTimeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Current" />
+      <xs:enumeration value="Sequenced" />
+      <xs:enumeration value="NonSequenced" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="TimeOption">
+    <xs:complexType>
+      <xs:attribute name="validTime" type="ValidTimeType" />
+      <xs:attribute name="transactionTime" type="TransactionTimeType" />
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ColumnConstraintType">
+    <xs:annotation>
+      <xs:documentation> Defines a column-level constraint including check constraint, nullable,
+        unique constraint, and primary key. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="0">
+      <xs:element name="Check">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="TimeOption" minOccurs="0" />
+          </xs:sequence>
+          <xs:attribute name="expression" type="xs:string" use="required" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+  <xs:simpleType name="CharSetType">
+    <xs:annotation>
+      <xs:documentation> Defines the legal values for 'CHARSET' attribute of character columns.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="LATIN" />
+      <xs:enumeration value="UNICODE" />
+      <xs:enumeration value="GRAPHIC" />
+      <xs:enumeration value="KANJI1" />
+      <xs:enumeration value="KANJISJIS" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DataType">
+    <xs:annotation>
+      <xs:documentation> Defines all of the data types for a table column. </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice>
+        <xs:element name="Integer" />
+        <xs:element name="SmallInt" />
+        <xs:element name="BigInt" />
+        <xs:element name="ByteInt" />
+        <xs:element name="Date" />
+        <xs:element name="Time">
+          <xs:complexType>
+            <xs:attribute name="timezone" type="xs:boolean" />
+            <xs:attribute name="fractionalSecondsPrecision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="TimeStamp">
+          <xs:complexType>
+            <xs:attribute name="timezone" type="xs:boolean" />
+            <xs:attribute name="fractionalSecondsPrecision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalYear">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalYearToMonth">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalMonth">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalDay">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalDayToHour">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalDayToMinute">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalDayToSecond">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+            <xs:attribute name="fractionalSecondsPrecision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalHour">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalHourToMinute">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalHourToSecond">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+            <xs:attribute name="fractionalSecondsPrecision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalMinute">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalMinuteToSecond">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+            <xs:attribute name="fractionalSecondsPrecision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="IntervalSecond">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+            <xs:attribute name="fractionalSecondsPrecision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Period">
+          <xs:complexType>
+            <xs:attribute name="type" type="PeriodUnitType" />
+            <xs:attribute name="timezone" type="xs:boolean" />
+            <xs:attribute name="precision" type="xs:integer" />
+            <xs:attribute name="validTime" type="xs:boolean" default="false">
+              <xs:annotation>
+                <xs:documentation> The validTime attribute indicates whether this column is a
+                  valid time column for a temporal table. </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="transactionTime" type="xs:boolean" default="false">
+              <xs:annotation>
+                <xs:documentation> The transactionTime attribute indicates whether this column
+                  is a transaction time column for a temporal table. </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DerivedPeriod">
+          <xs:complexType>
+            <xs:attribute name="startColumnName" type="xs:string"/>
+            <xs:attribute name="endColumnName" type="xs:string"/>
+            <xs:attribute name="validTime" type="xs:boolean" default="false">
+              <xs:annotation>
+                <xs:documentation> The validTime attribute indicates whether this column is a
+                  valid time column for a temporal table. </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="transactionTime" type="xs:boolean" default="false">
+              <xs:annotation>
+                <xs:documentation> The transactionTime attribute indicates whether this column
+                  is a transaction time column for a temporal table. </xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DoublePrecision" />
+        <xs:element name="Float">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Decimal">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+            <xs:attribute name="scale" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Numeric">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+            <xs:attribute name="scale" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Char">
+          <xs:complexType>
+            <xs:attribute name="length" type="xs:integer" use="required" />
+            <xs:attribute name="varying" type="xs:boolean" use="required" />
+            <xs:attribute name="uppercase" type="xs:boolean" use="required" />
+            <xs:attribute name="casespecific" type="xs:boolean" use="required" />
+            <xs:attribute name="charset" type="CharSetType" use="required" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Byte">
+          <xs:complexType>
+            <xs:attribute name="length" type="xs:integer" />
+            <xs:attribute name="varying" type="xs:boolean" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Blob">
+          <xs:complexType>
+            <xs:attribute name="size" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Clob">
+          <xs:complexType>
+            <xs:attribute name="size" type="xs:integer" />
+            <xs:attribute name="charset" type="CharSetType" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Number">
+          <xs:complexType>
+            <xs:attribute name="precision" type="xs:integer" />
+            <xs:attribute name="scale" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ST_GEOMETRY">
+          <xs:complexType>
+            <xs:attribute name="inlinelength" type="xs:integer" />
+            <xs:attribute name="size" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="XML">
+          <xs:complexType>
+            <xs:attribute name="inlinelength" type="xs:integer" />
+            <xs:attribute name="size" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="JSON">
+          <xs:complexType>
+            <xs:attribute name="inlinelength" type="xs:integer" />
+            <xs:attribute name="charset" type="CharSetType" />
+            <xs:attribute name="size" type="xs:integer" />
+            <xs:attribute name="storageformat" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DATASET">
+          <xs:complexType>
+            <xs:attribute name="inlinelength" type="xs:integer" />
+            <xs:attribute name="size" type="xs:integer" />
+            <xs:attribute name="storageformat" type="xs:integer" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="UDT">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="type">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="Distinct" />
+                  <xs:enumeration value="Complex" />
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="PeriodUnitType">
+    <xs:annotation>
+      <xs:documentation> Defines the begin/end types of a period data type. </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Date" />
+      <xs:enumeration value="Time" />
+      <xs:enumeration value="Timestamp" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="ColumnDefaultType">
+    <xs:attribute name="type">
+      <xs:annotation>
+        <xs:documentation>
+          Defines the options for the default value clause of a column definition.
+        </xs:documentation>
+      </xs:annotation>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="SysDefault" />
+          <xs:enumeration value="Null" />
+          <xs:enumeration value="User" />
+          <xs:enumeration value="Time" />
+          <xs:enumeration value="CurrentDate" />
+          <xs:enumeration value="CurrentTime" />
+          <xs:enumeration value="CurrentTimestamp" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="value" type="xs:string" />
+    <xs:attribute name="fromValue" type="xs:string" />
+    <xs:attribute name="toValue" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="ColumnType">
+    <xs:annotation>
+      <xs:documentation> Defines a column definition. Includes several sections: Column
+        name, Data type, Identity column attributes, Compress attributes, Column-level constraints,
+        and other column attributes. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence minOccurs="0">
+      <xs:element ref="DataType" />
+      <xs:element name="Default" type="ColumnDefaultType" minOccurs="0" />
+      <xs:element ref="Identity" minOccurs="0" />
+      <xs:element ref="Compress" minOccurs="0" />
+      <xs:element name="Constraint" type="ColumnConstraintType" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="order" type="xs:integer" use="required" />
+    <xs:attribute name="expression" type="xs:string" use="optional" />
+    <xs:attribute name="nullable" type="xs:boolean" />
+    <xs:attribute name="isRLSConstraint" type="xs:boolean" use="optional" default="false" />
+    <xs:attributeGroup ref="ColumnAttributeGroup" />
+    <xs:attribute name="systemGeneratedRowStart" type="xs:boolean" />
+    <xs:attribute name="systemGeneratedRowEnd" type="xs:boolean" />
+  </xs:complexType>
+  <xs:complexType name="ColumnListType">
+    <xs:annotation>
+      <xs:documentation> Defines a list of column definitions.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Column" type="ColumnType" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ColumnNameListType">
+    <xs:annotation>
+      <xs:documentation> Defines a list of column names and is used primarily in an index
+        definition. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Column" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="name" type="xs:string" use="required" />
+          <xs:attribute name="order" type="xs:integer" use="required" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="IndexKindType">
+    <xs:annotation>
+      <xs:documentation> Defines the index kind (Unique Primary Index, Unique Secondary Index, or Unique Join Index)
+      used to implement a PRIMARY KEY or UNIQUE constraint. </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UPI" />
+      <xs:enumeration value="USI" />
+      <xs:enumeration value="UJI" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="TableConstraintType">
+    <xs:annotation>
+      <xs:documentation> Defines a general table-level constraint. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element ref="TimeOption" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="TableCheckConstraintType">
+    <xs:annotation>
+      <xs:documentation> Defines instances of table-level check constraint.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="TableConstraintType">
+        <xs:attribute name="expression" type="xs:string" use="required" />
+        <xs:attribute name="implicit" type="xs:boolean" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="TableUniqueConstraintType">
+    <xs:annotation>
+      <xs:documentation> Defines instances of table-level unique constraint.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="TableConstraintType">
+        <xs:sequence>
+          <xs:element name="ColumnList" type="ColumnNameListType" />
+        </xs:sequence>
+        <xs:attribute name="asIndex" type="IndexKindType" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="TablePKConstraintType">
+    <xs:annotation>
+      <xs:documentation> Defines instances of table-level primary key constraint.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="TableConstraintType">
+        <xs:sequence>
+          <xs:element name="ColumnList" type="ColumnNameListType" />
+        </xs:sequence>
+        <xs:attribute name="asIndex" type="IndexKindType" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="TableReferentialConstraintType">
+    <xs:annotation>
+      <xs:documentation> Defines instances of table-level referential constraint.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="TableConstraintType">
+        <xs:sequence>
+          <xs:element name="ReferencingColumnList" type="ColumnNameListType" />
+          <xs:element name="ReferencedColumnList" type="ColumnNameListType" />
+        </xs:sequence>
+        <xs:attribute name="refTable" type="xs:string" use="required" />
+        <xs:attribute name="withCheck" type="xs:boolean">
+          <xs:annotation>
+            <xs:documentation> Not present standard referential constraint with check batch RI with
+              no check referential constraint. </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:group name="TableConstraintGroup">
+    <xs:annotation>
+      <xs:documentation> Combines different types of table-level constraints together to be
+        easily referenced when defining table type. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="TableConstraint">
+        <xs:complexType>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="Check" type="TableCheckConstraintType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Unique" type="TableUniqueConstraintType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="PrimaryKey" type="TablePKConstraintType" minOccurs="0" />
+            <xs:element name="ForeignKey" type="TableReferentialConstraintType" minOccurs="0" maxOccurs="unbounded" />
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="QueueTableConstraintGroup">
+    <xs:annotation>
+      <xs:documentation> Combines different types of table-level constraints together to be
+        easily referenced when defining queue table type. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="TableConstraint">
+        <xs:complexType>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="Check" type="TableCheckConstraintType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Unique" type="TableUniqueConstraintType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="PrimaryKey" type="TablePKConstraintType" minOccurs="0" />
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  <xs:simpleType name="TempTableCommitActionType">
+    <xs:annotation>
+      <xs:documentation> Defines the attribute for global temporary and volatile table preservation
+        clause. </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Delete" />
+      <xs:enumeration value="Preserve" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:group name="TempTableConstraintGroup">
+    <xs:annotation>
+      <xs:documentation> Combines different types of table-level constraints together to be
+        easily referenced when defining global temporary and volatile tables.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="TableConstraint">
+        <xs:complexType>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="Check" type="TableCheckConstraintType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="Unique" type="TableUniqueConstraintType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="PrimaryKey" type="TablePKConstraintType" minOccurs="0" />
+            <xs:element name="TablePreserveMode">
+              <xs:complexType>
+                <xs:attribute name="onCommit" type="TempTableCommitActionType" />
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  <xs:simpleType name="IndexOrderType">
+    <xs:annotation>
+      <xs:documentation> Defines the ordering for an index. </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Values" />
+      <xs:enumeration value="Hash" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ColumnGroupStorageType">
+    <xs:annotation>
+      <xs:documentation> Defines the storage type for a column partition (row/column).
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Row" />
+      <xs:enumeration value="Column" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="PartitioningListType">
+    <xs:annotation>
+      <xs:documentation> Defines multilevel partitioning in a table definition; a
+        partitioning level can be column partitioning or row partitioning. </xs:documentation>
+    </xs:annotation>
+    <xs:choice maxOccurs="unbounded">
+      <xs:element name="RowPartitioning">
+        <xs:complexType>
+          <xs:attribute name="level" type="xs:integer" />
+          <xs:attribute name="expression" type="xs:string" />
+          <xs:attribute name="extraPartitions" type="xs:integer" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ColumnPartitioning">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ColumnGroup" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="ColumnList" type="ColumnNameListType" />
+                </xs:sequence>
+                <xs:attribute name="order" type="xs:integer" />
+                <xs:attribute name="storage" type="ColumnGroupStorageType" />
+                <xs:attribute name="autoCompress" type="xs:boolean" default="true" />
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+          <xs:attribute name="level" type="xs:integer" use="required" />
+          <xs:attribute name="extraPartitions" type="xs:integer" />
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+  </xs:complexType>
+  <xs:simpleType name="ImplicitIndexForPKorUniqueType">
+    <xs:annotation>
+      <xs:documentation> Defines if an index an implicit index for a primary key or unique
+        constraint. When generating DDL, an implicit index is not generated in the DDL text.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PrimaryKeyConstraint" />
+      <xs:enumeration value="UniqueConstraint" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="NoPrimaryIndexType">
+    <xs:annotation>
+      <xs:documentation> Defines the structure of no primary index. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="PartitioningList" type="PartitioningListType" minOccurs="0" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="PrimaryIndexType">
+    <xs:annotation>
+      <xs:documentation> Defines the structure of a primary index. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ColumnList" type="ColumnNameListType" />
+      <xs:element name="PartitioningList" type="PartitioningListType" minOccurs="0" />
+    </xs:sequence>
+    <xs:attribute name="unique" type="xs:boolean" use="required" />
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="implicitIndexFor" type="ImplicitIndexForPKorUniqueType">
+      <xs:annotation>
+        <xs:documentation> When generating DDL, an implicit index is not generated in the DDL text.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="SecondaryIndexType">
+    <xs:annotation>
+      <xs:documentation> Defines the structure of a secondary index. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ColumnList" type="ColumnNameListType" />
+      <xs:element name="OrderBy" minOccurs="0">
+        <xs:complexType>
+          <xs:attribute name="type" type="IndexOrderType" />
+          <xs:attribute name="column" type="xs:string" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="unique" type="xs:boolean" />
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="allOption" type="xs:boolean" />
+    <xs:attribute name="RowLoadID" type="xs:boolean"/>
+    <xs:attribute name="implicitIndexFor" type="ImplicitIndexForPKorUniqueType">
+      <xs:annotation>
+        <xs:documentation> When generating DDL, an implicit index is not generated in the DDL text.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:complexType name="TableIndexesType">
+    <xs:annotation>
+      <xs:documentation> Defines the indexes for a table. A table (other than a global temporary
+        trace table must have NO PRIMARY INDEX or PRIMARY INDEX. It may also have 0 or more
+        secondary indexes. A primary index may be implicitly defined in DDL due to a PRIMARY KEY
+        constraint, UNIQUE constraint, or by default. A unique secondary index may be implicitly
+        defined in DDL due to a PRIMARY KEY constraint or UNIQUE constraint.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="PrimaryIndex" type="PrimaryIndexType" />
+        <xs:element name="NoPrimaryIndex" type="NoPrimaryIndexType" />
+      </xs:choice>
+      <xs:element name="SecondaryIndex" type="SecondaryIndexType" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:attributeGroup name="viewOptionGroup">
+    <xs:annotation>
+      <xs:documentation> Defines the attributes of a view definition. </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string" />
+    <xs:attribute name="dbName" type="xs:string" />
+    <xs:attribute name="recursive" type="xs:boolean" />
+  </xs:attributeGroup>
+  <xs:simpleType name="TableKindType">
+    <xs:annotation>
+      <xs:documentation> Defines the kind of table (set or multiset). </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Multiset" />
+      <xs:enumeration value="Set" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="MapKindType">
+    <xs:annotation>
+      <xs:documentation> Defines the kind of Map (contiguous or sparse). </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="contiguous" />
+      <xs:enumeration value="sparse" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PermBeforeJournalOptionType">
+    <xs:annotation>
+      <xs:documentation> Defines the options for permanent before journal in a table definition
+        (no/yes/dual). </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="No" />
+      <xs:enumeration value="Yes" />
+      <xs:enumeration value="Dual" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PermAfterJournalOptionType">
+    <xs:annotation>
+      <xs:documentation> Defines the options for permanent after journal in a table definition
+        (no/local/not local/dual). </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="No" />
+      <xs:enumeration value="Local" />
+      <xs:enumeration value="NotLocal" />
+      <xs:enumeration value="Dual" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="MergeBlockRatioType">
+    <xs:annotation>
+      <xs:documentation> Defines the options for merge block ratio in a table definition; the options
+        are no, default, and user-defined ratio (percent). </xs:documentation>
+    </xs:annotation>
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="No" />
+          <xs:enumeration value="Default" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="xs:integer" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="DataBlockSizeType">
+    <xs:annotation>
+      <xs:documentation> Defines the options for data block size in bytes in a table definition; the options
+        are default or user-defined block size. </xs:documentation>
+    </xs:annotation>
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Default" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="xs:integer" />
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="CheckSumLevelType">
+    <xs:annotation>
+      <xs:documentation> Defines the options for specifying checksum level in a table definition;
+        available levels are all, default, high, medium, low, or none. </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="All" />
+      <xs:enumeration value="Default" />
+      <xs:enumeration value="High" />
+      <xs:enumeration value="Medium" />
+      <xs:enumeration value="Low" />
+      <xs:enumeration value="None" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="DBRefObjectType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Table" />
+      <xs:enumeration value="View" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="BaseClassType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Table" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="BlockCompressionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Default" />
+      <xs:enumeration value="Manual" />
+      <xs:enumeration value="AutoTemp" />
+      <xs:enumeration value="Never" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="LDIDMLLevelType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Insert"/>
+      <xs:enumeration value="All"/>
+      <xs:enumeration value="None"/>
+      <xs:enumeration value="System"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:attributeGroup name="tableOptionGroup">
+    <xs:annotation>
+      <xs:documentation> Defines the table-level options for creating a table.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="kind" type="TableKindType" use="required" />
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="dbName" type="xs:string" use="required" />
+    <xs:attribute name="baseClass" type="BaseClassType" use="required" />
+    <xs:attribute name="fallback" type="xs:boolean" />
+    <xs:attribute name="map" type="xs:string" />
+    <xs:attribute name="map_kind" type="MapKindType" use="required" />
+    <xs:attribute name="journalTable" type="xs:string" />
+    <xs:attribute name="beforeJournal" type="PermBeforeJournalOptionType" />
+    <xs:attribute name="afterJournal" type="PermAfterJournalOptionType" />
+    <xs:attribute name="freeSpacePercent" type="xs:integer" />
+    <xs:attribute name="mergeBlockRatio" type="MergeBlockRatioType" default="Default" />
+    <xs:attribute name="dataBlockSize" type="DataBlockSizeType" />
+    <xs:attribute name="checkSumLevel" type="CheckSumLevelType" default="Default" />
+    <xs:attribute name="loadIsolation" type="xs:boolean" use="optional"/>
+    <xs:attribute name="ldiDMLLevel" type="LDIDMLLevelType" use="optional"/>
+    <xs:attribute name="replicationGroup" type="xs:string" />
+    <xs:attribute name="blockCompression" type="BlockCompressionType" use="optional" />
+    <xs:attribute name="systemVersioned" type="xs:boolean" />
+  </xs:attributeGroup>
+  <xs:attributeGroup name="queueTableOptionGroup">
+    <xs:annotation>
+      <xs:documentation> Defines the table-level options for creating a queue table.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="kind" type="TableKindType" use="required" />
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="dbName" type="xs:string" use="required" />
+    <xs:attribute name="baseClass" type="BaseClassType" use="required" />
+    <xs:attribute name="fallback" type="xs:boolean" />
+    <xs:attribute name="map" type="xs:string" />
+    <xs:attribute name="map_kind" type="MapKindType" use="required" />
+    <xs:attribute name="beforeJournal" type="PermBeforeJournalOptionType" />
+    <xs:attribute name="afterJournal" type="PermAfterJournalOptionType" />
+    <xs:attribute name="freeSpacePercent" type="xs:integer" />
+    <xs:attribute name="mergeBlockRatio" type="MergeBlockRatioType" default="Default" />
+    <xs:attribute name="dataBlockSize" type="DataBlockSizeType" />
+    <xs:attribute name="checkSumLevel" type="CheckSumLevelType" default="Default" />
+    <xs:attribute name="replicationGroup" type="xs:string" />
+    <xs:attribute name="blockCompression" type="BlockCompressionType" use="optional" />
+    <xs:attribute name="systemVersioned" type="xs:boolean" />
+  </xs:attributeGroup>
+  <xs:attributeGroup name="tempTableOptionGroup">
+    <xs:annotation>
+      <xs:documentation> Defines the table-level options for creating a global
+        temporary or volatile table. </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="kind" type="TableKindType" use="required" />
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="dbName" type="xs:string" use="required" />
+    <xs:attribute name="baseClass" type="BaseClassType" use="required" />
+    <xs:attribute name="fallback" type="xs:boolean" />
+    <xs:attribute name="map" type="xs:string" />
+    <xs:attribute name="map_kind" type="MapKindType" use="required" />
+    <xs:attribute name="freeSpacePercent" type="xs:integer" />
+    <xs:attribute name="mergeBlockRatio" type="MergeBlockRatioType" />
+    <xs:attribute name="dataBlockSize" type="DataBlockSizeType" />
+    <xs:attribute name="checkSumLevel" type="CheckSumLevelType" />
+    <xs:attribute name="replicationGroup" type="xs:string" />
+    <xs:attribute name="log" type="xs:boolean" />
+    <xs:attribute name="systemVersioned" type="xs:boolean" />
+  </xs:attributeGroup>
+  <xs:attributeGroup name="foreignServerOptionGroup">
+    <xs:annotation>
+      <xs:documentation> created only for existing  "xs:attributeGroup ref="foreignServerOptionGroup" //ak186104 </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="objId" type="xs:string" use="required"/>
+    <xs:attribute name="objVer" type="xs:string" use="required"/>
+    <xs:attribute name="authType" type="xs:string" use="optional"/>
+    <xs:attribute name="authName" type="xs:string" use="optional"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="dbName" type="xs:string" use="optional"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="hashIndexOptionGroup">
+    <xs:annotation>
+      <xs:documentation> Defines the options for creating a hash index.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation> The name of the hash index. </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="dbName" type="xs:string">
+      <xs:annotation>
+        <xs:documentation> The database or user under which the hash index is to be created.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="baseTableName" type="xs:string">
+      <xs:annotation>
+        <xs:documentation> The name of the table for which the hash index is created.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="baseDBName" type="xs:string">
+      <xs:annotation>
+        <xs:documentation>
+                  The name of the database in which the base table resides.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="fallback" type="xs:boolean" />
+    <xs:attribute name="map" type="xs:string" />
+    <xs:attribute name="map_kind" type="MapKindType" use="required" />
+    <xs:attribute name="checkSumLevel" type="CheckSumLevelType" />
+    <xs:attribute name="blockCompression" type="BlockCompressionType" use="optional" />
+  </xs:attributeGroup>
+  <xs:attributeGroup name="joinIndexOptionGroup">
+    <xs:annotation>
+      <xs:documentation> Defines the options for creating a join index.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:attribute name="name" type="xs:string">
+      <xs:annotation>
+        <xs:documentation> The name of the join index. </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="dbName" type="xs:string">
+      <xs:annotation>
+        <xs:documentation> The database or user under which the join index is to be created.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="fallback" type="xs:boolean" />
+    <xs:attribute name="map" type="xs:string" />
+    <xs:attribute name="map_kind" type="MapKindType" use="required" />
+    <xs:attribute name="checkSumLevel" type="CheckSumLevelType" />
+    <xs:attribute name="blockCompression" type="BlockCompressionType" use="optional" />
+  </xs:attributeGroup>
+  <xs:simpleType name="TemporalQualifierType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="NoTime" />
+      <xs:enumeration value="Current" />
+      <xs:enumeration value="Sequenced" />
+      <xs:enumeration value="NonSequenced" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="ReferenceListType">
+    <xs:annotation>
+      <xs:documentation> Defines the database objects referenced in the
+        definition of a view, hash index, or join index. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="Ref" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="name" type="xs:string" use="required" />
+          <xs:attribute name="dbName" type="xs:string" use="required" />
+          <xs:attribute name="type" type="DBRefObjectType" use="required" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="TableType">
+    <xs:annotation>
+      <xs:documentation> Defines a table. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ColumnList" type="ColumnListType" />
+      <xs:group ref="TableConstraintGroup" minOccurs="0" />
+      <xs:element name="Indexes" type="TableIndexesType" />
+      <xs:element name="SQLText" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="objId" type="xs:string" use="required" />
+    <xs:attribute name="objVer" type="xs:string" use="required" />
+    <xs:attributeGroup ref="tableOptionGroup" />
+  </xs:complexType>
+  <xs:complexType name="QueueTableType">
+    <xs:annotation>
+      <xs:documentation> Defines a queue table. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ColumnList" type="ColumnListType" />
+      <xs:group ref="TableConstraintGroup" minOccurs="0" />
+      <xs:element name="Indexes" type="TableIndexesType" />
+      <xs:element name="SQLText" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="objId" type="xs:string" use="required" />
+    <xs:attribute name="objVer" type="xs:string" use="required" />
+    <xs:attributeGroup ref="queueTableOptionGroup" />
+  </xs:complexType>
+  <xs:complexType name="TemporaryTableType">
+    <xs:annotation>
+      <xs:documentation> Defines a global temporary or volatile table excluding a global
+        temporary trace table.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ColumnList" type="ColumnListType" />
+      <xs:group ref="TempTableConstraintGroup" minOccurs="0" />
+      <xs:element name="Indexes" type="TableIndexesType" />
+      <xs:element name="SQLText" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="objId" type="xs:string" use="required" />
+    <xs:attribute name="objVer" type="xs:string" use="required" />
+    <xs:attributeGroup ref="tempTableOptionGroup" />
+  </xs:complexType>
+  <xs:simpleType name="ClauseListType">
+    <xs:annotation>
+      <xs:documentation>  created for clauselisttype //ak186104 </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:complexType name="TableOpClauseType">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a table operator information.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:choice>
+      <xs:element name="ImportClauseList" type="ClauseListType" minOccurs="0"/>
+      <xs:element name="ExportClauseList" type="ClauseListType" minOccurs="0"/>
+    </xs:choice>
+    <xs:attribute name="tblopdb" type="xs:string" use="required"/>
+    <xs:attribute name="tblopname" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="ForeignServerType">
+    <xs:annotation>
+      <xs:documentation>
+        Defines a foreign server.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ServerClauseList" type="ClauseListType" minOccurs="0"/>
+      <xs:element name="ImportClause" type="TableOpClauseType" minOccurs="0"/>
+      <xs:element name="ExportClause" type="TableOpClauseType" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="foreignServerOptionGroup"/>
+  </xs:complexType>
+  <xs:complexType name="TemporaryTraceTableType">
+    <xs:annotation>
+      <xs:documentation> Defines a global temporary trace table.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ColumnList" type="ColumnListType" />
+      <xs:group ref="TempTableConstraintGroup" minOccurs="0" />
+      <xs:element name="Indexes" type="TableIndexesType" />
+      <xs:element name="SQLText" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="objId" type="xs:string" use="required" />
+    <xs:attribute name="objVer" type="xs:string" use="required" />
+    <xs:attributeGroup ref="tempTableOptionGroup" />
+  </xs:complexType>
+  <xs:complexType name="ViewType">
+    <xs:annotation>
+      <xs:documentation> Defines a view. For now, only the column list of
+        the view and the query statement for the view represented as SQL text
+        are defined. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="ColumnList" type="ColumnListType" />
+      <xs:element name="RefList" type="ReferenceListType" minOccurs="0" />
+      <xs:element name="SQLText" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="objId" type="xs:string" use="required" />
+    <xs:attribute name="objVer" type="xs:string" />
+    <xs:attributeGroup ref="viewOptionGroup" />
+  </xs:complexType>
+  <xs:complexType name="HashIndexType">
+    <xs:annotation>
+      <xs:documentation> Defines a Hash Index. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="IndexColumnList" type="ColumnNameListType" />
+      <xs:element name="DistributeColumnList" type="ColumnNameListType" minOccurs="0" />
+      <xs:element name="OrderBy" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ColumnList" type="ColumnNameListType" minOccurs="0" />
+          </xs:sequence>
+          <xs:attribute name="mode">
+            <xs:simpleType>
+              <xs:restriction base="xs:string">
+                <xs:enumeration value="Value" />
+                <xs:enumeration value="Hash" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="SQLText" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="objId" type="xs:string" use="required" />
+    <xs:attribute name="objVer" type="xs:string" />
+    <xs:attributeGroup ref="hashIndexOptionGroup" />
+  </xs:complexType>
+  <xs:complexType name="JoinIndexType">
+    <xs:annotation>
+      <xs:documentation> Defines a Join Index. For now, only the column definitions are
+        supported. </xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="RepeatComlumnList" type="ColumnListType" minOccurs="0" />
+      <xs:element name="FixedColumnList" type="ColumnListType" />
+      <xs:element name="ValidTime" minOccurs="0">
+        <xs:complexType>
+          <xs:attribute name="qualifier" type="TemporalQualifierType" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="TransactionTime" minOccurs="0">
+        <xs:complexType>
+          <xs:attribute name="qualifier" type="TemporalQualifierType" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="RefList" type="ReferenceListType" />
+      <xs:element name="SQLText" type="xs:string" />
+    </xs:sequence>
+    <xs:attribute name="objId" type="xs:string" use="required" />
+    <xs:attribute name="objVer" type="xs:string" />
+    <xs:attributeGroup ref="joinIndexOptionGroup" />
+  </xs:complexType>
+  <xs:element name="UnsupportedObjects">
+    <xs:annotation>
+      <xs:documentation> Lists the unsupported database objects.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Cast" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="dbName" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ErrorTable" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="dbName" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Function" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="dbName" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Macro" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="dbName" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Method" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="dbName" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Procedure" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="dbName" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ReplicationGroup" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Trigger" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="dbName" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Type" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:attribute name="name" type="xs:string" />
+            <xs:attribute name="dbName" type="xs:string" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="TeradataDBObjectSet">
+    <xs:annotation>
+      <xs:documentation> Defines the root element for the instance XML of this XML schema. There may
+        be multiple elements representing database objects included in the instance of this element.
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="Table" type="TableType" />
+          <xs:element name="GlobalTemporaryTable" type="TemporaryTableType" />
+          <xs:element name="VolatileTable" type="TemporaryTableType" />
+          <xs:element name="QueueTable" type="QueueTableType" />
+          <xs:element name="View" type="ViewType" />
+          <xs:element name="HashIndex" type="HashIndexType" />
+          <xs:element name="JoinIndex" type="JoinIndexType" />
+          <xs:element name="GlobalTemporaryTraceTable" type="TemporaryTraceTableType" />
+          <xs:element name="ForeignServer" type="ForeignServerType" />
+        </xs:choice>
+        <xs:element ref="UnsupportedObjects" minOccurs="0" />
+        <xs:element name="Environment">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Server">
+                <xs:complexType>
+                  <xs:attribute name="dbVersion" type="xs:string" />
+                  <xs:attribute name="dbRelease" type="xs:string" />
+                  <xs:attribute name="hostName" type="xs:string" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="User">
+                <xs:complexType>
+                  <xs:attribute name="userId" type="xs:string" />
+                  <xs:attribute name="userName" type="xs:string" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Session">
+                <xs:complexType>
+                  <xs:attribute name="charset" type="xs:string" />
+                  <xs:attribute name="dateTime" type="xs:dateTime" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Trace" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="MemUsage">
+                <xs:complexType>
+                  <xs:attribute name="memLimit" type="xs:integer">
+                    <xs:annotation>
+                      <xs:documentation> The maximum amount of memory that can be used in generating XML output (excluding those consumed by the ParseTree nodes). </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="totalAlloc" type="xs:integer">
+                    <xs:annotation>
+                      <xs:documentation> The total amount of memory that has ever been allocated by the memory manager for the current Show IN XML request. </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="totalXercesAlloc" type="xs:integer">
+                    <xs:annotation>
+                      <xs:documentation> The total amount of memory that has ever been allocated by the memory manager for the Xerces operation for the current Show IN XML request. </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="maxAlloc" type="xs:integer">
+                    <xs:annotation>
+                      <xs:documentation> The maximum amount of memory allocated by the memory manager at any moment for the current Show IN XML request. </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="maxBlockSize" type="xs:integer">
+                    <xs:annotation>
+                      <xs:documentation> The size of the largest block allocated by the memory manager at any moment for the current Show IN XML request. </xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required" />
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
