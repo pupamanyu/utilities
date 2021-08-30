@@ -6,6 +6,24 @@
 # Recompile cdcmod binary on the node where gsutil is installed
 # if `gsutil version -l` does not produce an output with "compiled crcmod: True"
 # Reference: https://cloud.google.com/storage/docs/gsutil/addlhelp/CRC32CandInstallingcrcmod
+
+config_init() {
+	# Load configuration, and setup environment variables
+	#
+	#
+	INITFILE="./config"
+	source ${INITFILE}
+}
+
+get_credentials() {
+	# TODO: Extract needed credentials
+	# 
+	# Script to get the service account key/credentials from the vault is called here.
+	# Vault related code is explicitly kept as TODO here for security reasons
+	# credentials need to be made available as parameter, and/or environment variables.
+	# 	
+}
+
 load_gcs() {
         local SRCEXT="csv"
         # Bigquery uses a specific format in JSON. Please use this format to be compatible with bq load"
@@ -147,4 +165,15 @@ append_table() {
                 ${SRC} \
                 ${SCHEMAFILE} && return 0; } || return 1
 
+}
+
+get_bq_field_type() {
+	# Given a Teradata Field Type, provide an closely matching BigQuery Field Type.
+	# Commonly used data types are added here. More mappings can be added as per needs 
+	# Teradata Reference: https://docs.teradata.com/r/iRq_F~XxKYWu7Kv~HRd~ew/D_RBrANpKte9E5uvWjq8~Q
+	# BigQuery Reference: https://cloud.google.com/bigquery/docs/schemas
+	local TDFIELDTYPE="$1"
+	declare -A td2bq=([INTEGER]=INT64 [BIGINT]=INT64 [DECIMAL]=DECIMAL [DATE]=DATE [TIME]=TIME [FLOAT]=FLOAT64 [NUMBER]=NUMERIC [TIMESTAMP]=TIMESTAMP [BLOB]=BYTES [VARCHAR]=STRING [VARBYTE]=BYTES [CHA
+RACTER]=STRING);
+	echo ${td2bq["$1"]}
 }
