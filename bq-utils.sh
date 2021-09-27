@@ -177,3 +177,60 @@ get_bq_field_type() {
 RACTER]=STRING);
 	echo ${td2bq["$1"]}
 }
+
+get_unique_job_id() {
+	# Get a unique job id to be used within workflow scheduler for tracking purposes
+	local JOBID="$(python3 -c 'from uuid import uuid4; print(uuid4());')"
+	echo ${JOBID}
+}
+
+create_bq_snapshot() {
+	#
+	#
+	#
+	local SRCDATASET=$1
+	local SRCTABLE=$2
+	local SNAPDATASET=$3
+	local EXPIRYSECONDS=$4
+	{ bq cp \
+	--snapshot \
+	--no_clobber \
+	--expiration=${EXPIRYSECONDS} \
+	${SRCDATASET}.${SRCTABLE} \
+	${SNAPDATASET}.${SRCTABLE} && return 0; } || return 1
+}
+
+update_bq_snapshot_meta() {
+	#
+	#
+	#
+	local DATASET=$1
+	local TABLE=$2
+	local JOBID=$3
+	local TIMESTAMP=$4
+	{ bq update \
+	--set_label jobid:${JOBID} \
+	--set_label timestamp:${TIMESTAMP} && return 0; } || return 1
+}
+
+filter_bq_snapshot() {
+	#
+	#
+	#
+	local DATASET=$1
+	local JOBID=$2
+	local TIMESTAMP=$3
+	bq ls \
+	-n 1000000 \
+	--format json ${DATASET} \
+	| jq -c  -r ".[] | select(.type == \"SNAPSHOT\" and .labels.jobid == \"${JOBID}\" and .labels.timestamp == \"${TIMESTAMP}\") | .tableReference.tableId"
+}
+
+delete_table() {
+	#
+	#
+	#
+	local DATASET=$1
+	local TABLE=$2
+	{ bq rm ${DATASET}.${TABLE} && return 0; } || return 1
+}
