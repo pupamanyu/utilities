@@ -45,6 +45,12 @@ load_gcs() {
 
 }
 
+get_unique_job_id() {
+	# Get a unique job id to be used within workflow scheduler for tracking purposes
+	local JOBID="$(python3 -c 'from uuid import uuid4; print(uuid4());')"
+	echo ${JOBID}
+}
+
 
 extract_bq_field_schema() {
         local PROJECT="$1"
@@ -92,6 +98,29 @@ drop_partition() {
         local PARTITION="$4"
         { bq rm \
                 --table ${PROJECT}:${DATASET}.${TABLE}\$${PARTITION} && return 0; } || return 1
+}
+
+drop_table() {
+	#
+	#
+	#
+	local DATASET=$1
+	local TABLE=$2
+	{ bq rm \
+		--table ${PROJECT}:${DATASET}.${TABLE} && return 0; } || return 1
+}
+
+update_table_metadata() {
+	#
+	#
+	#
+	local DATASET=$1
+	local TABLE=$2
+	local JOBID=$3
+	local TIMESTAMP=$4
+	{ bq update \
+	--set_label jobid:${JOBID} \
+	--set_label timestamp:${TIMESTAMP} ${DATASET}.${TABLE} && return 0; } || return 1
 }
 
 create_clustered_table() {
@@ -178,11 +207,6 @@ RACTER]=STRING);
 	echo ${td2bq["$1"]}
 }
 
-get_unique_job_id() {
-	# Get a unique job id to be used within workflow scheduler for tracking purposes
-	local JOBID="$(python3 -c 'from uuid import uuid4; print(uuid4());')"
-	echo ${JOBID}
-}
 
 create_bq_snapshot() {
 	#
@@ -200,19 +224,6 @@ create_bq_snapshot() {
 	${SNAPDATASET}.${SRCTABLE} && return 0; } || return 1
 }
 
-update_bq_snapshot_meta() {
-	#
-	#
-	#
-	local DATASET=$1
-	local TABLE=$2
-	local JOBID=$3
-	local TIMESTAMP=$4
-	{ bq update \
-	--set_label jobid:${JOBID} \
-	--set_label timestamp:${TIMESTAMP} && return 0; } || return 1
-}
-
 filter_bq_snapshot() {
 	#
 	#
@@ -224,13 +235,4 @@ filter_bq_snapshot() {
 	-n 1000000 \
 	--format json ${DATASET} \
 	| jq -c  -r ".[] | select(.type == \"SNAPSHOT\" and .labels.jobid == \"${JOBID}\" and .labels.timestamp == \"${TIMESTAMP}\") | .tableReference.tableId"
-}
-
-delete_table() {
-	#
-	#
-	#
-	local DATASET=$1
-	local TABLE=$2
-	{ bq rm ${DATASET}.${TABLE} && return 0; } || return 1
 }
