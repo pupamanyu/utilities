@@ -8,6 +8,7 @@
 # Reference: https://cloud.google.com/storage/docs/gsutil/addlhelp/CRC32CandInstallingcrcmod
 
 config_init() {
+	# 
 	# Load configuration, and setup environment variables
 	#
 	#
@@ -17,17 +18,36 @@ config_init() {
 
 get_credentials() {
 	# TODO: Extract needed credentials
-	# 
-	# Script to get the service account key/credentials from the vault is called here.
+	# Helper Function to extract the needed credentials. 
+	# Note: Intentionally left empty for the user to implement extraction mechanisms as per the needs.
+	# Script/Function to get the service account key/credentials from the vault is called here.
 	# Vault related code is explicitly kept as TODO here for security reasons
 	# credentials need to be made available as parameter, and/or environment variables.
 	# 	
 }
 
+lock() {
+	# 
+	# Helper function to set lockfile
+	#
+	local LOCKFILE="$1"
+	touch ${LOCKFILE} && echo "Created lockfile ${LOCKFILE}"
+}
+
+clear_lock() {
+	# 
+	# Helper function to clear lockfile
+	#
+	local LOCKFILE="$1"
+	[ -f ${LOCKFILE} ] && rm -f ${LOCKFILE} && echo "Cleared lockfile ${LOCKFILE}"
+}
+
 load_gcs() {
+	# 
+	# Helper function to load file(s) into gcs bucket
+	# 
         local SRCEXT="csv"
         # Bigquery uses a specific format in JSON. Please use this format to be compatible with bq load"
-        local LCKFILE="${SRCDIR}/.loadlock"
         local SRCDIR="$1"
         local TARGETBUCKET="$2"
         local TARGETDIR="$3"
@@ -36,23 +56,25 @@ load_gcs() {
         local TARGET="${TARGETBUCKET}/${TARGETDIR}"
         { [ -f ${SRCDIR}/${CTRLFILE} ] && echo "Local Control file ${SRCDIR}/${CONTROLFILE}. Initiating loading into GCS for ${SRCEXT} files under ${SRCDIR} into ${TARGET}" \
                 && cd ${SRCDIR} \
-                && touch ${LOCKFILE} \
                 && gsutil -q -r -m cp ${SRCDIR}/*.${SRCEXT} ${TARGET} \
                 && echo "Loaded all the ${SRCEXT} files under ${SRCDIR} into ${TARGET} successfully" \
-                && echo "Removing the lock file ${LCKFILE} now" \
-                && rm -f ${LCKFILE} \
                 && return 0; } || return 1
 
 }
 
 get_unique_job_id() {
+	# 
 	# Get a unique job id to be used within workflow scheduler for tracking purposes
-	local JOBID="$(python3 -c 'from uuid import uuid4; print(uuid4());')"
+	#
+	local JOBID="$(python3 -c 'from uuid import uuid4; print(uuid4().hex);')"
 	echo ${JOBID}
 }
 
 
 extract_bq_field_schema() {
+	# 
+	# Extract existing table schema from BigQuery into the specified local schema file
+	#
         local PROJECT="$1"
         local DATASET="$2"
         local TABLE="$3"
@@ -62,6 +84,9 @@ extract_bq_field_schema() {
 }
 
 get_new_field_schema() {
+	# 
+	# Helper function to convert specified field into the BigQuery schema compatiable format.
+	#
         local FIELD="$1"
         local TYPE="$2"
         local DESCRIPTION="$3"
@@ -71,6 +96,9 @@ get_new_field_schema() {
 }
 
 merge_field_schema() {
+	# 
+	# Helper function to merge specified field within the provided BigQuery schema file.
+	#
         local FIELD="$1"
         local TYPE="$2"
         local DESCRIPTION="$3"
@@ -82,6 +110,9 @@ merge_field_schema() {
 }
 
 add_field() {
+	# 
+	# Helper function to update BigQuery table schema using the provided BigQuery schema file.
+	#
         local PROJECT="$1"
         local DATASET="$2"
         local TABLE="$3"
@@ -92,6 +123,9 @@ add_field() {
 
 
 drop_partition() {
+	# 
+	# Helper function to drop specified partition within the specified BigQuery table.
+	#
         local PROJECT="$1"
         local DATASET="$2"
         local TABLE="$3"
@@ -102,7 +136,7 @@ drop_partition() {
 
 drop_table() {
 	#
-	#
+	# Helper function to drop specified BigQuery table or snapshot.
 	#
 	local DATASET=$1
 	local TABLE=$2
@@ -112,7 +146,7 @@ drop_table() {
 
 update_table_metadata() {
 	#
-	#
+	# Helper function to update specified BigQuery table metadata.
 	#
 	local DATASET=$1
 	local TABLE=$2
@@ -124,6 +158,9 @@ update_table_metadata() {
 }
 
 create_clustered_table() {
+	#
+	# Helper function to create specified BigQuery clustered table.
+	#
         local PROJECT="$1"
         local DATASET="$2"
         local TABLE="$3"
@@ -145,6 +182,9 @@ create_clustered_table() {
 
 
 create_partitioned_table() {
+	#
+	# Helper function to create specified BigQuery clustered table with time partitioning.
+	#
         local PROJECT="$1"
         local DATASET="$2"
         local TABLE="$3"
@@ -170,6 +210,9 @@ create_partitioned_table() {
 }
 
 append_table() {
+	#
+	# Helper function to load CSV formatted data into the specified BigQuery table.
+	#
         local SRCFMT="CSV"
         local PARTITIONTYPE="DAY"
         # Set CSVSKIPHEADER to 0 if CSV does not have header"
@@ -210,7 +253,7 @@ RACTER]=STRING);
 
 create_bq_snapshot() {
 	#
-	#
+	# Helper function to create named snapshot for the specified BigQuery table.
 	#
 	local SRCDATASET=$1
 	local SRCTABLE=$2
@@ -226,7 +269,7 @@ create_bq_snapshot() {
 
 filter_bq_snapshot() {
 	#
-	#
+	# Helper function to filter/search existing named snapshot with the specified JOBID, and TIMESTAMP labels.
 	#
 	local DATASET=$1
 	local JOBID=$2
