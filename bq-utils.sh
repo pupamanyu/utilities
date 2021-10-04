@@ -7,24 +7,6 @@
 # if `gsutil version -l` does not produce an output with "compiled crcmod: True"
 # Reference: https://cloud.google.com/storage/docs/gsutil/addlhelp/CRC32CandInstallingcrcmod
 
-config_init() {
-	# 
-	# Load configuration, and setup environment variables
-	#
-	#
-	INITFILE="./config"
-	source ${INITFILE}
-}
-
-get_credentials() {
-	# TODO: Extract needed credentials
-	# Helper Function to extract the needed credentials. 
-	# Note: Intentionally left empty for the user to implement extraction mechanisms as per the needs.
-	# Script/Function to get the service account key/credentials from the vault is called here.
-	# Vault related code is explicitly kept as TODO here for security reasons
-	# credentials need to be made available as parameter, and/or environment variables.
-	# 	
-}
 
 lock() {
 	# 
@@ -40,6 +22,69 @@ clear_lock() {
 	#
 	local LOCKFILE="$1"
 	[ -f ${LOCKFILE} ] && rm -f ${LOCKFILE} && echo "Cleared lockfile ${LOCKFILE}"
+}
+
+config_init() {
+	# 
+	# Load configuration, and setup environment variables
+	#
+	#
+	INITFILE="./config"
+	source ${INITFILE}
+}
+
+create_named_gcloud_config() {
+	#
+	# Helper function to create specified named gcloud configuration
+	#
+	local CONFIGURATION="$1"
+	gcloud config configurations create ${CONFIGURATION}
+}
+
+activate_named_gcloud_config() {
+	#
+	# Helper function to activate specified named gcloud configuration
+	#
+	local CONFIGURATION="$1"
+	gcloud config configurations activate ${CONFIGURATION}
+}
+
+delete_named_gcloud_config() {
+	#
+	#
+	#
+	local CONFIGURATION="$1"
+	activate_named_gcloud_config default \
+	&& gcloud config configurations delete ${CONFIGURATION}
+}
+
+get_credentials() {
+	# TODO: Extract needed credentials
+	# Helper Function to extract the needed credentials. 
+	# Note: Intentionally left empty for the user to implement extraction mechanisms as per the needs.
+	# Script/Function to get the service account key/credentials from the vault is called here.
+	# Vault related code is explicitly kept as TODO here for security reasons
+	# credentials need to be made available as parameter, and/or environment variables.
+	# 	
+}
+
+gcloud_config_init() {
+	#
+	# Helper function to initialize gcloud configuration
+	# 
+	local CONFIGURATION="$1"
+	local PROJECT="$2"
+	local REGION="$3"
+	local SERVICEACCOUNT="$4"
+	local BILLINGPROJECT="$5"
+	local KEYFILE="$6"
+	[ ! -f ${KEYFILE} ] && echo "Specified key file ${KEYFILE} does not exist. Aborting gcloud config init..." && return 1
+	activate_named_gcloud_config ${CONFIGURATION}
+	gcloud config set core/project ${PROJECT}
+	gcloud config set core/account ${SERVICEACCOUNT}
+	gcloud config set compute/region ${REGION}
+	gcloud config set billing/quota_project ${BILLINGPROJECT}
+	gcloud auth activate-service-account ${SERVICEACCOUNT} --key-file=${KEYFILE}
 }
 
 load_gcs() {
@@ -249,7 +294,6 @@ get_bq_field_type() {
 RACTER]=STRING);
 	echo ${td2bq["$1"]}
 }
-
 
 create_bq_snapshot() {
 	#
