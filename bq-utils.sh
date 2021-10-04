@@ -319,7 +319,7 @@ filter_bq_snapshot() {
 	local JOBID=$2
 	local TIMESTAMP=$3
 	bq ls \
-	-n 1000000 \
+	--max_rows=1000000 \
 	--format json ${DATASET} \
 	| jq -c  -r ".[] | select(.type == \"SNAPSHOT\" and .labels.jobid == \"${JOBID}\" and .labels.timestamp == \"${TIMESTAMP}\") | .tableReference.tableId"
 }
